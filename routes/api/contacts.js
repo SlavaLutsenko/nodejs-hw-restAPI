@@ -7,16 +7,21 @@ const {
   updateContact,
 } = require("../../models/contacts");
 
+const {
+  validatePostCont,
+  validateUpdCont,
+} = require("../../middleware/validation");
+
 const router = express.Router();
 
 router.get("/", listContacts);
 
 router.get("/:contactId", getContactById);
 
-router.post("/", addContact);
+router.post("/", validatePostCont, addContact);
 
 router.delete("/:contactId", removeContact);
 
-router.put("/:contactId", updateContact);
+router.put("/:contactId", validateUpdCont, updateContact);
 
 module.exports = router;
