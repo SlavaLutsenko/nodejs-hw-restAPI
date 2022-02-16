@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const validatePostCont = (req, res, next) => {
   const postContSchema = Joi.object({
-    username: Joi.string().min(2).max(20).required(),
+    name: Joi.string().min(2).max(20).required(),
     email: Joi.string()
       .min(2)
       .max(20)
@@ -19,7 +19,7 @@ const validatePostCont = (req, res, next) => {
 
 const validateUpdCont = (req, res, next) => {
   const updContSchema = Joi.object({
-    username: Joi.string().min(2).max(20),
+    name: Joi.string().min(2).max(20),
     email: Joi.string()
       .min(2)
       .max(20)
