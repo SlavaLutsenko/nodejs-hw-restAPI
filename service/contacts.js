@@ -1,12 +1,4 @@
-const fs = require("fs/promises");
-const path = require("path");
-const normalizedPath = path.resolve(__dirname, "./contacts.json");
 const { ContactsModel } = require("../contacts.model");
-
-// const getContactsFromDB = async () => {
-//   const contacts = ContactsModel.find();
-//   return contacts;
-// };
 
 const listContacts = async (req, res) => {
   try {
@@ -41,13 +33,7 @@ const removeContact = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   try {
-    const { name, email, phone, favorite } = req.body;
-    const newContact = await ContactsModel.create({
-      name,
-      email,
-      phone,
-      favorite,
-    });
+    const newContact = await ContactsModel.create(req.body);
     res.status(201).json(newContact);
   } catch (error) {
     console.log(error.message);
@@ -58,26 +44,34 @@ const addContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   try {
     const id = req.params.contactId;
-    const contacts = await ContactsModel.findByIdAndUpdate();
-    const isContactExist = contacts.some((el) => el.id === id);
-    const { name, email, phone } = req.body;
-
-    if (Object.keys(req.body).length === 0) {
-      res.status(400).json({ message: "missing fields" });
-    } else if (!isContactExist) res.status(404).json({ message: "Not found" });
+    const isFieldExist = Object.keys(req.body).length;
+    if (!isFieldExist)
+      return res.status(400).json({ message: "missing fields" });
     else {
-      contacts.forEach((el) => {
-        if (el.id === id) {
-          el.name = name || el.name;
-          el.email = email || el.email;
-          el.phone = phone || el.phone;
-        }
+      const updContact = await ContactsModel.findByIdAndUpdate(id, req.body, {
+        new: true,
       });
-      fs.writeFile(normalizedPath, JSON.stringify(contacts));
-      const updCont = contacts.filter((el) => el.id === id);
-      res.json(updCont);
+      res.json(updContact);
     }
   } catch (error) {
+    res.status(404).json({ message: "Not found" });
+    console.log(error.message);
+  }
+};
+
+const updateStatusContact = async (req, res, next) => {
+  try {
+    const id = req.params.contactId;
+    if (!req.body.favorite)
+      return res.status(400).json({ message: "missing field favorite" });
+    else {
+      const updContact = await ContactsModel.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      res.json(updContact);
+    }
+  } catch (error) {
+    res.status(404).json({ message: "Not found" });
     console.log(error.message);
   }
 };
@@ -88,4 +82,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };
