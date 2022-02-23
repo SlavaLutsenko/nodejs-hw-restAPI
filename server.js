@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const connectDB = require("./bin/db");
+const { authRouter } = require("./auth/auth.controller");
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -48,6 +49,7 @@ class ContactsServer {
 
   initRoutes() {
     this.app.use("/contacts", router);
+    this.app.use("/users", authRouter);
   }
 
   initErrorHandling() {
