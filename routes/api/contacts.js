@@ -14,13 +14,15 @@ const {
   validateUpdFavField,
 } = require("../../middleware/validation");
 
+const { authorize } = require("../../middleware/authorize.middleware");
+
 const router = express.Router();
 
-router.get("/", listContacts);
+router.get("/", authorize(), listContacts);
 
 router.get("/:contactId", getContactById);
 
-router.post("/", validatePostCont, addContact);
+router.post("/", authorize(), validatePostCont, addContact);
 
 router.delete("/:contactId", removeContact);
 

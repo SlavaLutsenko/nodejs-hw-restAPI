@@ -9,7 +9,7 @@ const validatePostCont = (req, res, next) => {
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
       .required(),
     phone: Joi.string().min(6).max(12).required(),
-    favorite: Joi.bool().default(false).required(),
+    favorite: Joi.bool().default(false),
   });
   const { error } = postContSchema.validate(req.body);
   if (error) {
@@ -45,6 +45,7 @@ const validateUpdFavField = (req, res, next) => {
   }
   next();
 };
+
 module.exports = {
   validatePostCont,
   validateUpdCont,
